@@ -1,0 +1,75 @@
+import json
+import requests
+from dateutil import parser
+import datetime
+import time
+
+
+#dados basicos de acesso ao Portal
+username = 'seu-usuario'
+password =  'sua-senha'
+base_url = 'https://site.tecnology.com.br/rest/v0/'
+
+#parametros utilizados como exemplo de consulta
+id_equip = 1
+id_dado = 1
+id_alarm = 5
+hdado_datahora_inicial = datetime.datetime(2019, 01, 10, 0, 0, 0).strftime("%d-%m-%Y %H:%M:%S")
+hdado_datahora_final   = datetime.datetime(2019, 01, 10, 0, 10, 0).strftime("%d-%m-%Y %H:%M:%S")
+halm_datahora_inicial = datetime.datetime(2019, 01, 10, 0, 0, 0).strftime("%d-%m-%Y %H:%M:%S")
+halm_datahora_final   = datetime.datetime(2019, 01, 21, 0, 0, 0).strftime("%d-%m-%Y %H:%M:%S")
+
+Exemplos de acesso à API REST via script Python:
+
+1 -)
+response = requests.get(base_url + 'clps/', auth=requests.auth.HTTPBasicAuth(username, password))
+clps = json.loads(response.content)
+print(clps) 
+
+2 -)
+response = requests.get(base_url + 'clps/{0}/'.format(int(id_equip)),auth=requests.auth.HTTPBasicAuth(username, password))
+clp = json.loads(response.content)
+print(clp)
+
+3 -)
+response = requests.get(base_url + 'clps/{0}/dados'.format(int(id_equip)),auth=requests.auth.HTTPBasicAuth(username, password))
+dados = json.loads(response.content)
+print(dados)
+
+4-)
+response = requests.get(base_url + '/dados/',auth=requests.auth.HTTPBasicAuth(username, password))
+dados = json.loads(response.content)
+print(dados)
+
+5-)
+response = requests.get(base_url + 'dados/{0}/'.format(int(id_dado)),auth=requests.auth.HTTPBasicAuth(username, password))
+dado = json.loads(response.content)
+print(dado)
+
+6-)
+response = requests.get(base_url + 'historico/{0}/{1}/{2}/'.format(int(id_dado), hdado_datahora_inicial, hdado_datahora_final),
+                        auth=requests.auth.HTTPBasicAuth(username, password))
+hdado = json.loads(response.content)
+print(hdado)
+
+7-)
+response = requests.get(base_url + 'clps/{0}/alarmes/'.format(int(id_equip)),auth=requests.auth.HTTPBasicAuth(username, password))
+alarmes = json.loads(response.content)
+print(alarmes)
+
+8-)
+response = requests.get(base_url + '/alarmes/', auth=requests.auth.HTTPBasicAuth(username, password))
+alarmes = json.loads(response.content)
+print(alarmes)
+
+9-)
+response = requests.get(base_url + 'alarmes/{0}/'.format(int(id_alarm)),auth=requests.auth.HTTPBasicAuth(username, password))
+alarme = json.loads(response.content)
+print(alarme)
+
+10-)
+response = requests.get(base_url + 'historico_alarmes/{0}/{1}/{2}/'.format(int(id_dado), halm_datahora_inicial, halm_datahora_final),
+                        auth=requests.auth.HTTPBasicAuth(username, password))
+halm = json.loads(response.content)
+print(halm)
+

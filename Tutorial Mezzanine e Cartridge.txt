@@ -1,0 +1,114 @@
+migrate : migra as novas informações (classes) para o database 
+makemigrations : faz a migração de novas informações inseridas (pra algum lugar interno)
+
+Instalar Python3 (python2 nao tem virtualenv)
+
+Instalar virtualenv  --> pip install virtualenv (Fora do ambiente)
+* A partir da instalacao do pacote "virtualenv" voce pode criar uma venv no terminal --> python -m venv nome_venv
+                                                                  para ativar a venv --> source nome_venv/bin/activate
+Instalar PyCharm 
+
+Criar projeto no PyCharm
+Escolher Intepretador --> Configurar uma virtualenv na criação ou pode escolher uma existente  
+                      --> Se a venv for criada pelo PyCharm, ela já estara ativada no termial.
+
+Criado o projeto com a venv, instalar django (com a venv ativada)
+  pip install django==1.11.27 (Com a venv ativada instala dentro da venv, caso contraio django vai para o python da maquina)
+
+(Nao obrigatorio)
+Instalar django rest framework:
+   ---> pip install djangorestframework
+   ---> pip install markdown
+   ---> pip install django-filter
+(Não obrigatorio)
+
+
+Instalar mezzanine:                        --> pip install mezzanine
+
+Para criar o primeiro projeto mezzanine:   --> mezzanine-project project_name .
+                                               (mezzanine usa algo similar ao --> django-admin startproject nome_projeto)
+
+Agora, devemos criar um app django que fara parte do projeto mezzanine. Isso significa que quando o padroes minimos da app
+estiverem em execução, elas seguirão os padroes definidos pelo projeto mezzanine, e não pelo projeto django.
+
+ --> python manage.py startapp nome_app
+
+Agora, equivalente ao migrate em um projeto django faça:
+
+ --> python manage.py createdb --noinput
+
+Na criação do database em uma primeira execução, não é necessario executar --> python manage.py makemigrations
+Mas, alterados os modelos, esse comando deve ser executado.
+
+##### NÃO ESQUECER DE ADICIONAR SUA NOVA APP EM settings.py #####
+
+Para testar a nova app, execute:
+
+ --> python manage.py runserver
+
+Para criar um superuser, use o comando --> python manage.py createsuperuser
+
+
+
+### A partir disso, acesse a documentação do CMS Mezzanine e siga os padroes indicados. ###
+
+
+* Model define Objetos e caracteristicas dentro do Django.
+* No mezzanine - Toda classe que herdar uma Page será um NOVO tipo de CONTEÚDO. (Page herda model e tem comportamentos
+  definidos por Default para ser o gerador de conteudos).
+
+
+Ex: class Cadastro(Page):
+        nome = models.CharField(max_length=20)
+        idade = models.IntegerField
+        email = models.CharField(max_length=40)
+
+Para registrar o novo tipo de conteudo, em admin.py utilize PageAdmin
+
+  from django.contrib import admin
+* from mezzanine.pages.admin import PageAdmin   # Importa PageAdmin 
+* from .models import Cadastro                  # Importa o novo Conteudo 
+
+admin.site.register(Cadastro, PageAdmin)        # Registra o novo conteudo
+
+
+Para campos adicionais, voce pode inserir um novo campo em sua Classe que herda page e em admin fazer 
+
+     author_extra_fieldsets = ((None, {"fields": ("dob", "inserir_novo_campo_aqui",)}),)
+
+onde inserir_novo_campo_aqui é o nome da variavel do novo campo que voce deseja.
+(NUNCA esquecer de herdar a classe)
+
+mezzanine.core.models  --> Importa RichText
+mezzanine.pages.models --> Importa Pages
+
+#### O exemplo de conteudo customizado precisa ser melhor entendido (Mas funcionou) ####
+#### Sequer consegui entender onde os comandos para mostrar conteudos customizados devem ser execuados #### 
+#### Page templates so tem descrição de cmo funciona os templates ####
+#### page_processors não funcionou - passei por cima ####
+
+* Comportamentos podem dos Models podem ser definidos por funções internas do django (can_add(), can_delete(), can_move(). 
+  Existe um exemplo na documentação que funcionou (foi testado)).
+
+### Em Page menus ### 
+
+Mostra o menu de Templates de pagina default e ensina a ativar e desativar os templates dados.
+(Pode ser feito via interface também - não sei porque mostrou via codigo)
+
+#### Para acrescentar apps externas, é necessario na app utilizar Page para que Mezzanine reconheça as definições da app ###
+
+
+Parei em MODEL CUSTOMIZATION
+
+####### Cartridge #######
+
+Unicsa diferenças são baixar o cartridge antes de criar o projeto:
+
+--> pip install -U cartridge
+
+e criar o prjeto com o parametro -a cartridge para criar a seção de Shop ja associada ao projeto:
+
+--> mezzanine-project -a cartridge project_name .
+
+De resto é seguir a documentação do site.
+

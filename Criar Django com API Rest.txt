@@ -1,0 +1,158 @@
+﻿Conceitos: API é uma interface (Exe: Botoes do radio, teclado do pc) que permite ACESSAR algo (no caso, aplicações).
+           REST são padroes/principios/regras de arquitetura e implementação
+              REpresntational State Transfer --> Consiste em transferir um ESTADO QUE REPRESENTA um objeto e não o objeto em
+                                                 si.
+                                             --> Em contrapartida existe o SOAP (Simple Object Access Protocol)
+           HTTP implementa esses padroes (por isso usa GET, POST)
+           API RESTful é uma INTERFACE de PROGRAMACAO de/para APLICAÇÃO que PERMITE a utilização de aplicações com a 
+           arquitetura REST. Ou seja, uma API RESTful aplica(apresenta) os PRINCIPIOS REST.
+           
+           Lembrar o que Heber falou: Casca 
+
+
+Instalar Python3 (python2 nao tem virtualenv)
+
+Instalar virtualenv  --> pip install virtualenv (Fora do ambiente)
+* A partir da instalacao do pacote "virtualenv" voce pode criar uma venv no terminal --> python -m venv nome_venv
+                                                                  para ativar a venv --> source nome_venv/bin/activate
+Instalar PyCharm 
+
+Criar projeto no PyCharm
+Escolher Intepretador --> Configurar uma virtualenv na criação ou pode escolher uma existente  
+                      --> Se a venv for criada pelo PyCharm, ela já estara ativada no termial.
+
+Criado o projeto com a venv, instalar django (com a venv ativada)
+  pip install django  (Com a venv ativada instala dentro da venv, caso contraio django vai para o python da maquina)
+
+Instalar django rest framework:
+   ---> pip install djangorestframework
+   ---> pip install markdown
+   ---> pip install django-filter
+
+Para criar o primeiro projeto django: --> django-admin startproject nome_projeto .       (. no final elimina uma subpasta)
+
+OBS: Não confundir a pasta do projeto que apontamos com o PyCharm com a pasta do projeto que é criada pelo django
+     (Um nome bom para o projeto Django seria api - pois é esse "projeto" que faz o papel de API com a app que vamos criar)  
+
+Criar a app:                          --> python manage.py startapp nome_app
+
+Criada a app, voce deve registrar ela no arquivo settings.py em INSTALLED_APPS:
+       'nome_app',
+
+Criar banco de dados local sq.lite:   --> python manage.py migrate
+Para faze acesso à um banco de dados em um servidor olhar a documentação Django
+
+Criar super usuario:                  --> python manage.py createsuperuser  
+(opcional eu acho)                    gabriel  12345678
+
+rodar o projeto:                      --> python manage.py runserver
+
+Feito esses procedimentos, registre o rest_framework nas apps (settings.py) e nas urls (urls.py)
+   'rest_framework',                                     (settings.py)
+    path('api-auth/', include('rest_framework.urls'))    (urls.py)   ---- from django.urls import include
+
+Apos isso, fazer modelos desejados.
+
+Para inserir as modificaçoes feitas em models no banco de dados faça --> python manage.py makemigrations
+E depois :                                                           --> python manage.py migrate
+
+Registre o modelo em admin fazendo a importação e registrando:
+ --> from .models import Cliente
+ --> admin.site.register(Cliente)
+
+Crie na app um arquivo chamado serializers.py e insira o seguinte codigo nele:
+
+from rest_framework import serializers
+from .models import Cliente
+
+class ClienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cliente
+        fields = ('id', 'nome', 'endereco', 'idade')
+
+* Serializer define os dados que serão serializados do objeto que vamos representar o estado. 
+
+Em seguida, definimos o(s) ViewSet(s) para cada cada modelo EM views.py:
+
+from rest_framework import viewsets
+from .models import Cliente
+from .serializers import ClienteSerializer
+
+class ClienteViewSet(viewsets.ModelViewSet):
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer
+
+* O ViewSet de um model é responsavel pela tomada dos dados de um modelo no banco (atraves do objects.all()) e o Serializer
+  serializa os dados para representar na tela.
+
+Em seguida temos que configurar os routers EM urls.py:
+
+from django.contrib import admin
+from django.urls import path, include
+from rest_framework import routers
+from apptreino.views import ClienteViewSet
+
+# Routers provide an easy way of automatically determining the URL conf.
+  router = routers.DefaultRouter()
+  router.register(r'cliente', ClienteViewSet)
+# 2 - Suponha que tenhamos mais um Model chamado Produto, colocariamos entao:
+#     router.register(r'produto', ProdutoViewSet)
+
+urlpatterns = [
+    path('', include(router.urls)), # 1 - Essa linha é um path generico que recebe qualquer router que definirmos acima
+    path('admin/', admin.site.urls),
+    path('api-auth/', include('rest_framework.urls')),
+]
+
+
+* os routers aqui definem na url quais objetos vamos recuperar. Se for dados de um cliente --> /cliente
+                                                                Se for dados de um produto --> /produto
+
+
+##### NÃO ESQUECER DE ADICIONAR SUA NOVA APP EM settings.py #####  
+
+Caminho: rotas -> views -> models -> serializers
+
+Qual a diferença entre criar o CRUD na mão (como no tutorial de fundamentos da udemy) e utilizar django REST framework ?
+CRUD é um conceito inicial para aplicações Web. (Create, Read, Update, Delete são ações DINAMICAS)
+
+O REST fornece um PADRAO para realizar a ações de CRUD, o que permite a troca de informações entre sistemas e apps WEB. 
+(Se Create, Read, Update e Delete serão dispinibilizados para os usuários da aplicação, quem decide isso é quem implementa)
+
+Um EndPoint é o meio que o Client tem de manipular/usar os dados de outras aplicações na sua aplicação.    
+
+
+
+Comandos avulsos para projeto:
+
+pip freeze > requeriments.txt --> cria o arquivo requeriments.txt com as libs utilizadas no projeto
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

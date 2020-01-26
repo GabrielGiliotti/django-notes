@@ -1,2 +1,2 @@
 # Django
-Django Apps
+Django Apps and Tip files.
